@@ -1,10 +1,16 @@
 #include <iostream>
-#include <cmath>
 //#include <opencv2/opencv.hpp>
+#include "Quadtree.h"
 
 using namespace std;
 
 int main() {
-    cout << "hee";
+    auto quadtree = new Quadtree();
+    quadtree->insert(10, 2);
+    quadtree->insert(-10, 2);
+    quadtree->insert(-10, -2);
+    quadtree->insert(10, -2);
+
+    quadtree->insert(4, 8);
     return 0;
 }

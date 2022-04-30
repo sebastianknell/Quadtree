@@ -7,36 +7,30 @@
 
 #include <cmath>
 
-enum quadrant {
-    NE,
-    SE,
-    SW,
-    NW
-};
-
 using Point = struct{double x; double y;};
 
 struct Node {
     Point point;
     bool isLeaf;
-    unsigned long gridSize = 0;
     Node* ne = nullptr;
     Node* se = nullptr;
     Node* sw = nullptr;
     Node* nw = nullptr;
     Node() = default;
     explicit Node(Point);
+    Node** getQuadrant(Point, unsigned long);
 };
 
 class Quadtree {
     Node* root;
-    unsigned long gridSize = pow(2, 42);
+    unsigned long initialGridSize = 16;
     int minGridSize = 1;
-    quadrant getQuadrant(Point, unsigned long);
 public:
     Quadtree();
     void insert(Point point);
+    void insert(double x, double y);
     void remove(Point point);
+    void remove(double x, double y);
 };
 
 
