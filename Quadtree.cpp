@@ -8,8 +8,9 @@ Node::Node(Point p): isLeaf(true) {
     point = p;
 }
 
-Quadtree::Quadtree() {
+Quadtree::Quadtree(int gridSize): initialGridSize(gridSize) {
     root = nullptr;
+    minGridSize = 40;
 }
 
 Node** Node::getQuadrant(Point p, unsigned long gridSize) {

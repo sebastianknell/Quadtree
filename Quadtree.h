@@ -23,10 +23,10 @@ struct Node {
 
 class Quadtree {
     Node* root;
-    unsigned long initialGridSize = 16;
-    int minGridSize = 1;
+    int initialGridSize;
+    int minGridSize;
 public:
-    Quadtree();
+    Quadtree(int gridSize);
     void insert(Point point);
     void insert(double x, double y);
     void remove(Point point);
