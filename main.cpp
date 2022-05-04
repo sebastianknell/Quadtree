@@ -1,8 +1,4 @@
-#include <iostream>
-#include <opencv2/opencv.hpp>
 #include "Quadtree.h"
-
-using namespace std;
 
 void test() {
     auto quadtree = new Quadtree(512);
@@ -15,7 +11,6 @@ void test() {
 }
 
 const int width = 512;
-int mouseX, mouseY;
 
 static void clickHandler(int event, int x, int y, int, void*) {
     if (event == cv::EVENT_LBUTTONDOWN)
@@ -27,7 +22,7 @@ int main() {
     cv::imshow("img", img);
     cv::setWindowProperty("img", cv::WND_PROP_TOPMOST, 1);
     cv::setMouseCallback("img", clickHandler);
-    cv::waitKey(4000);
+    cv::waitKey(2000);
 
     cv::rectangle( img, cv::Point(0, 0), cv::Point(width, width), cv::Scalar(0, 0, 0), 2);
     cv::imshow("img", img);
@@ -37,8 +32,9 @@ int main() {
     cv::imshow("img", img);
     cv::waitKey(2000);
     cv::rectangle( img, cv::Point(width/2, 0), cv::Point(width, width/2), cv::Scalar(0, 0, 0), 2);
+    cv::circle(img, cv::Point(100, 100), 4, cv::Scalar(0, 0, 255), -1);
     cv::imshow("img", img);
-    cv::waitKey(2000);
+    cv::waitKey(0);
 
     return 0;
 }

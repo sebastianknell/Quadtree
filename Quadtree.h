@@ -5,33 +5,40 @@
 #ifndef QUADTREE_QUADTREE_H
 #define QUADTREE_QUADTREE_H
 
+#include <iostream>
 #include <cmath>
+#include <opencv2/opencv.hpp>
+
+using namespace std;
 
 // mouse listener gives integers
 using Point = struct{int x; int y;};
+using Square = struct{int w; int x; int y;};
 
 struct Node {
-    Point point;
-    bool isLeaf;
+    Square square;
+    Point point; // only valid if hasPoint is true
+    bool hasPoint;
     Node* ne = nullptr;
     Node* se = nullptr;
     Node* sw = nullptr;
     Node* nw = nullptr;
-    Node() = default;
-    explicit Node(Point);
-    Node** getQuadrant(Point, int);
+    explicit Node(Square);
+    explicit Node(Point, Square);
+    Node** getQuadrant(Point);
 };
 
 class Quadtree {
     Node* root;
-    int initialGridSize;
+    int gridSize;
     int minGridSize;
 public:
-    Quadtree(int gridSize);
+    explicit Quadtree(int gridSize);
     void insert(Point point);
     void insert(int x, int y);
     void remove(Point point);
     void remove(int x, int y);
+    void show(cv::InputOutputArray);
 };
 
 
