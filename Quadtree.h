@@ -7,7 +7,8 @@
 
 #include <cmath>
 
-using Point = struct{double x; double y;};
+// mouse listener gives integers
+using Point = struct{int x; int y;};
 
 struct Node {
     Point point;
@@ -18,7 +19,7 @@ struct Node {
     Node* nw = nullptr;
     Node() = default;
     explicit Node(Point);
-    Node** getQuadrant(Point, unsigned long);
+    Node** getQuadrant(Point, int);
 };
 
 class Quadtree {
@@ -28,9 +29,9 @@ class Quadtree {
 public:
     Quadtree(int gridSize);
     void insert(Point point);
-    void insert(double x, double y);
+    void insert(int x, int y);
     void remove(Point point);
-    void remove(double x, double y);
+    void remove(int x, int y);
 };
 
 

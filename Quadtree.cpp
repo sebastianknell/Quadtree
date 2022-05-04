@@ -13,7 +13,7 @@ Quadtree::Quadtree(int gridSize): initialGridSize(gridSize) {
     minGridSize = 40;
 }
 
-Node** Node::getQuadrant(Point p, unsigned long gridSize) {
+Node** Node::getQuadrant(Point p, int gridSize) {
     // TODO fix comparation
     auto quadrantSize = gridSize / 2;
     if (p.x >= quadrantSize && p.y >= quadrantSize)
@@ -49,6 +49,6 @@ void Quadtree::insert(Point point) {
     }
 }
 
-void Quadtree::insert(double x, double y) {
+void Quadtree::insert(int x, int y) {
     insert({x, y});
 }
