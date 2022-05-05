@@ -1,40 +1,35 @@
 #include "Quadtree.h"
 
-void test() {
-    auto quadtree = new Quadtree(512);
-    quadtree->insert(10, 2);
-    quadtree->insert(-10, 2);
-    quadtree->insert(-10, -2);
-    quadtree->insert(10, -2);
-
-    quadtree->insert(4, 8);
-}
-
 const int width = 512;
+const string windowName = "Quadtree Visualization";
+cv::Mat img(width, width, CV_8UC3, cv::Scalar(255, 255, 255));
+Quadtree quadtree(width);
 
 static void clickHandler(int event, int x, int y, int, void*) {
-    if (event == cv::EVENT_LBUTTONDOWN)
+    if (event == cv::EVENT_LBUTTONDOWN) {
         cout << x << " " << y << endl;
+        quadtree.insert(x, y);
+        img.setTo(cv::Scalar(255, 255, 255));
+        quadtree.show(img);
+        cv::imshow(windowName, img);
+    }
 }
 
 int main() {
-    cv::Mat img(width, width, CV_8UC3, cv::Scalar(255, 255, 255));
-    cv::imshow("img", img);
-    cv::setWindowProperty("img", cv::WND_PROP_TOPMOST, 1);
-    cv::setMouseCallback("img", clickHandler);
-    cv::waitKey(2000);
+    cv::imshow(windowName, img);
+    cv::setWindowProperty(windowName, cv::WND_PROP_TOPMOST, 1);
+    cv::setMouseCallback(windowName, clickHandler);
 
-    cv::rectangle( img, cv::Point(0, 0), cv::Point(width, width), cv::Scalar(0, 0, 0), 2);
-    cv::imshow("img", img);
-    cv::waitKey(2000);
+    char c;
+    do {
+        c = (char)cv::waitKey(0);
+    } while (c != 'q');
 
-    cv::rectangle( img, cv::Point(0, 0), cv::Point(width/2, width/2), cv::Scalar(0, 0, 0), 2);
-    cv::imshow("img", img);
-    cv::waitKey(2000);
-    cv::rectangle( img, cv::Point(width/2, 0), cv::Point(width, width/2), cv::Scalar(0, 0, 0), 2);
-    cv::circle(img, cv::Point(100, 100), 4, cv::Scalar(0, 0, 255), -1);
-    cv::imshow("img", img);
-    cv::waitKey(0);
+//    Quadtree quadtree(width);
+//    quadtree.insert(128, 128);
+//    quadtree.insert(384, 384);
+//    quadtree.insert(128, 128);
+//    quadtree.insert(128, 128);
 
     return 0;
 }
