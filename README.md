@@ -1,4 +1,6 @@
 # Quadtree
+Implementación con visualización del Quadtree.
+![preview](preview.png)
 
 ### Grupo 4
  - Sebastian Knell
@@ -18,3 +20,8 @@ cmake ..
 make
 ./Quadtree
 ```
+
+### Como usar?
+* Insertar punto con click izquierdo
+* Eliminar punto con click derecho (falta)
+* Salir con la tecla 'q'
