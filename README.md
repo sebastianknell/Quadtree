@@ -5,3 +5,16 @@
  - Massimo Imparato
  - Diego Enciso
  - Jean Angeles
+
+### Dependencias
+* cmake
+* opencv
+
+### Como correr?
+```shell
+mkdir build
+cd build
+cmake ..
+make
+./Quadtree
+```
