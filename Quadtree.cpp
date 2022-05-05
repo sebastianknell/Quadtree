@@ -53,14 +53,17 @@ Quadtree::~Quadtree() {
 
 Node** Node::getQuadrant(Point p) {
     auto quadrantSize = square.w / 2;
-    if (p.x >= quadrantSize && p.y >= quadrantSize)
-        return &ne;
-    if(p.x >= quadrantSize && p.y < quadrantSize)
+    auto x = square.x;
+    auto y = square.y;
+    if (p.x >= quadrantSize + x && p.y >= quadrantSize + y)
         return &se;
-    if(p.x < quadrantSize && p.y >= quadrantSize)
+    if(p.x >= quadrantSize + x && p.y < quadrantSize + y)
+        return &ne;
+    if(p.x < quadrantSize + x && p.y >= quadrantSize + y)
         return &sw;
-    else
+    if (p.x < quadrantSize + x && p.y < quadrantSize + y)
         return &nw;
+    return nullptr;
 }
 
 void Quadtree::insert(Point point) {
@@ -84,13 +87,13 @@ void Quadtree::insert(Point point) {
         currPoint = curr->point.value();
     else return;
     if (currPoint == point) return;
-    curr->point = nullopt;
     Node **quadrant1, **quadrant2;
     do {
         auto newWidth = curr->square.w/2;
         auto x = curr->square.x;
         auto y = curr->square.y;
-        if (newWidth <= minGridSize) return;
+        if (newWidth < minGridSize) return;
+        curr->point = nullopt;
         curr->ne = new Node({newWidth, x + newWidth, y});
         curr->se = new Node({newWidth, x + newWidth, y + newWidth});
         curr->sw = new Node({newWidth, x, y + newWidth});

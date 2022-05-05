@@ -25,11 +25,5 @@ int main() {
         c = (char)cv::waitKey(0);
     } while (c != 'q');
 
-//    Quadtree quadtree(width);
-//    quadtree.insert(128, 128);
-//    quadtree.insert(384, 384);
-//    quadtree.insert(128, 128);
-//    quadtree.insert(128, 128);
-
     return 0;
 }
