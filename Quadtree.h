@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <optional>
+#include <stack>
+#include <cmath>
 #include <opencv2/opencv.hpp>
 
 using namespace std;
@@ -14,6 +16,7 @@ using namespace std;
 // mouse listener gives integers
 using Point = struct{int x; int y;};
 using Square = struct{int w; int x; int y;};
+extern int radius;
 
 struct Node {
     Square square;

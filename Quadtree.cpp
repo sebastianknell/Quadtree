@@ -4,6 +4,8 @@
 
 #include "Quadtree.h"
 
+int radius = 4;
+
 static void show(Node* node, cv::InputOutputArray &img) {
     if (!node) return;
     auto x = node->square.x;
@@ -12,7 +14,7 @@ static void show(Node* node, cv::InputOutputArray &img) {
     cv::rectangle(img, cv::Point(x, y), cv::Point(x + w - 1, y + w - 1), cv::Scalar(0, 0, 0), 2);
     if (node->point.has_value()) {
         auto point = node->point.value();
-        cv::circle(img, cv::Point(point.x, point.y), 4, cv::Scalar(0, 0, 255), -1);
+        cv::circle(img, cv::Point(point.x, point.y), radius, cv::Scalar(0, 0, 255), -1);
     }
     else if (node->isDivided){
         ::show(node->ne, img);
@@ -24,6 +26,10 @@ static void show(Node* node, cv::InputOutputArray &img) {
 
 static bool operator==(Point &a, Point &b) {
     return a.x == b.x && a.y == b.y;
+}
+
+static bool isInCircle(Point p, Point circleP, int radius) {
+    return (pow(p.x - circleP.x, 2) + pow(p.y - circleP.y, 2)) <= pow(radius, 2);
 }
 
 Node::Node(Square s): isDivided(false), square(s) {
@@ -110,6 +116,76 @@ void Quadtree::insert(Point point) {
 
 void Quadtree::insert(int x, int y) {
     insert({x, y});
+}
+
+void Quadtree::remove(Point point) {
+    auto curr = root;
+    stack<Node*> fathers;
+    while (curr) {
+        if (!curr->isDivided && curr->point.has_value()) {
+            if (isInCircle(point, curr->point.value(), radius)) {
+                curr->point = nullopt;
+                if (curr == root) {
+                    delete root;
+                    root = nullptr;
+                    return;
+                }
+                break;
+            }
+            else break;
+        }
+        else if (curr->isDivided) {
+            auto quadrant = curr->getQuadrant(point);
+            if (*quadrant == nullptr) return;
+            fathers.push(curr);
+            curr = *quadrant;
+        }
+        else break;
+    }
+    while (!fathers.empty()) {
+        curr = fathers.top();
+        fathers.pop();
+        // Si ninguno esta dividido
+        if (!curr->ne->isDivided && !curr->se->isDivided && !curr->sw->isDivided && !curr->nw->isDivided) {
+            // Si solo hay punto en uno unir
+            auto points = 0;
+            Point p;
+            if (curr->ne->point.has_value()) {
+                points++;
+                p = curr->ne->point.value();
+            }
+            if (curr->se->point.has_value()) {
+                points++;
+                p = curr->se->point.value();
+            }
+            if (curr->sw->point.has_value()) {
+                points++;
+                p = curr->sw->point.value();
+            }
+            if (curr->nw->point.has_value()) {
+                points++;
+                p = curr->nw->point.value();
+            }
+            if (points <= 1) {
+                delete curr->ne;
+                delete curr->se;
+                delete curr->sw;
+                delete curr->nw;
+                curr->ne = nullptr;
+                curr->se = nullptr;
+                curr->sw = nullptr;
+                curr->nw = nullptr;
+                curr->point = p;
+                curr->isDivided = false;
+            }
+            else break;
+        }
+        else break;
+    }
+}
+
+void Quadtree::remove(int x, int y) {
+    remove({x, y});
 }
 
 void Quadtree::show(cv::InputOutputArray &img) {
