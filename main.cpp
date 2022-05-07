@@ -7,14 +7,12 @@ Quadtree quadtree(width);
 
 static void clickHandler(int event, int x, int y, int, void*) {
     if (event == cv::EVENT_LBUTTONDOWN) {
-        cout << x << " " << y << endl;
         quadtree.insert({x, y});
         img.setTo(cv::Scalar(255, 255, 255));
         quadtree.show(img);
         cv::imshow(windowName, img);
     }
     if (event == cv::EVENT_RBUTTONDOWN) {
-        cout << x << " " << y << endl;
         quadtree.remove({x, y});
         img.setTo(cv::Scalar(255, 255, 255));
         quadtree.show(img);

@@ -32,13 +32,10 @@ static bool isInCircle(Point p, Point circleP, int radius) {
     return (pow(p.x - circleP.x, 2) + pow(p.y - circleP.y, 2)) <= pow(radius, 2);
 }
 
-Node::Node(Square s): isDivided(false), square(s) {
-    cout << "New node with w=" << s.w << " x=" << s.x << " y=" << s.y << endl;
-}
+Node::Node(Square s): isDivided(false), square(s) {}
 
 Node::Node(Point p, Square s): isDivided(false), square(s) {
     point = p;
-    cout << "New node with w=" << s.w << " x=" << s.x << " y=" << s.y << " and point = (" << p.x << ", " << p.y << ")" << endl;
 }
 
 Node::~Node() {
