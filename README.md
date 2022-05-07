@@ -23,5 +23,5 @@ make
 
 ### Como usar?
 * Insertar punto con click izquierdo
-* Eliminar punto con click derecho (falta)
+* Eliminar punto con click derecho
 * Salir con la tecla 'q'
