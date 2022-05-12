@@ -113,9 +113,10 @@ void Quadtree::insert(int x, int y) {
 
 void Quadtree::remove(Point point) {
     auto curr = root;
-    stack<Node*> fathers;
+    Node* father = nullptr;
     while (curr) {
-        if (!curr->isDivided && curr->point.has_value()) {
+        if (curr->point.has_value()) {
+            // TODO caso cuando el punto esta en el eje
             if (isInCircle(point, curr->point.value(), radius)) {
                 curr->point = nullopt;
                 if (curr == root) {
@@ -130,50 +131,39 @@ void Quadtree::remove(Point point) {
         else if (curr->isDivided) {
             auto quadrant = curr->getQuadrant(point);
             if (*quadrant == nullptr) return;
-            fathers.push(curr);
+            father = curr;
             curr = *quadrant;
         }
         else break;
     }
-    while (!fathers.empty()) {
-        curr = fathers.top();
-        fathers.pop();
-        // Si ninguno esta dividido
-        if (!curr->ne->isDivided && !curr->se->isDivided && !curr->sw->isDivided && !curr->nw->isDivided) {
-            // Si solo hay punto en uno unir
-            auto points = 0;
-            Point p;
-            if (curr->ne->point.has_value()) {
-                points++;
-                p = curr->ne->point.value();
-            }
-            if (curr->se->point.has_value()) {
-                points++;
-                p = curr->se->point.value();
-            }
-            if (curr->sw->point.has_value()) {
-                points++;
-                p = curr->sw->point.value();
-            }
-            if (curr->nw->point.has_value()) {
-                points++;
-                p = curr->nw->point.value();
-            }
-            if (points <= 1) {
-                delete curr->ne;
-                delete curr->se;
-                delete curr->sw;
-                delete curr->nw;
-                curr->ne = nullptr;
-                curr->se = nullptr;
-                curr->sw = nullptr;
-                curr->nw = nullptr;
-                curr->point = p;
-                curr->isDivided = false;
-            }
-            else break;
+    curr = father;
+    // Si ninguno esta dividido
+    if (!curr->ne->isDivided && !curr->se->isDivided && !curr->sw->isDivided && !curr->nw->isDivided) {
+        // Si solo hay punto, quitar division
+        auto points = 0;
+        if (curr->ne->point.has_value()) {
+            points++;
         }
-        else break;
+        if (curr->se->point.has_value()) {
+            points++;
+        }
+        if (curr->sw->point.has_value()) {
+            points++;
+        }
+        if (curr->nw->point.has_value()) {
+            points++;
+        }
+        if (points <= 0) {
+            delete curr->ne;
+            delete curr->se;
+            delete curr->sw;
+            delete curr->nw;
+            curr->ne = nullptr;
+            curr->se = nullptr;
+            curr->sw = nullptr;
+            curr->nw = nullptr;
+            curr->isDivided = false;
+        }
     }
 }
 
