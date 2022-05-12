@@ -15,19 +15,19 @@ using namespace std;
 
 // mouse listener gives integers
 using Point = struct{int x; int y;};
-using Square = struct{int w; int x; int y;};
+using Rectangle = struct{int w; int h; int x; int y;};
 extern int radius;
 
 struct Node {
-    Square square;
+    Rectangle rectangle;
     optional<Point> point;
     bool isDivided;
     Node* ne = nullptr;
     Node* se = nullptr;
     Node* sw = nullptr;
     Node* nw = nullptr;
-    explicit Node(Square);
-    explicit Node(Point, Square);
+    explicit Node(Rectangle);
+    explicit Node(Point, Rectangle);
     ~Node();
     Node** getQuadrant(Point);
 };

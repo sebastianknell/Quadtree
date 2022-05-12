@@ -8,15 +8,16 @@ int radius = 4;
 
 static void show(Node* node, cv::InputOutputArray &img) {
     if (!node) return;
-    auto x = node->square.x;
-    auto y = node->square.y;
-    auto w = node->square.w;
-    cv::rectangle(img, cv::Point(x, y), cv::Point(x + w - 1, y + w - 1), cv::Scalar(0, 0, 0), 2);
+    auto x = node->rectangle.x;
+    auto y = node->rectangle.y;
+    auto w = node->rectangle.w;
+    auto h = node->rectangle.h;
+    cv::rectangle(img, cv::Point(x, y), cv::Point(x + w - 1, y + h - 1), cv::Scalar(0, 0, 0), 2);
     if (node->point.has_value()) {
         auto point = node->point.value();
         cv::circle(img, cv::Point(point.x, point.y), radius, cv::Scalar(0, 0, 255), -1);
     }
-    else if (node->isDivided){
+    if (node->isDivided){
         ::show(node->ne, img);
         ::show(node->se, img);
         ::show(node->sw, img);
@@ -32,9 +33,9 @@ static bool isInCircle(Point p, Point circleP, int radius) {
     return (pow(p.x - circleP.x, 2) + pow(p.y - circleP.y, 2)) <= pow(radius, 2);
 }
 
-Node::Node(Square s): isDivided(false), square(s) {}
+Node::Node(Rectangle s): isDivided(false), rectangle(s) {}
 
-Node::Node(Point p, Square s): isDivided(false), square(s) {
+Node::Node(Point p, Rectangle s): isDivided(false), rectangle(s) {
     point = p;
 }
 
@@ -55,23 +56,24 @@ Quadtree::~Quadtree() {
 }
 
 Node** Node::getQuadrant(Point p) {
-    auto quadrantSize = square.w / 2;
-    auto x = square.x;
-    auto y = square.y;
-    if (p.x >= quadrantSize + x && p.y >= quadrantSize + y)
+//    auto quadrantSize = rectangle.w / 2;
+    if (!point.has_value()) return nullptr;
+    auto x = point.value().x;
+    auto y = point.value().y;
+    if (p.x >= x && p.y >= y)
         return &se;
-    if(p.x >= quadrantSize + x && p.y < quadrantSize + y)
+    if(p.x >= x && p.y < y)
         return &ne;
-    if(p.x < quadrantSize + x && p.y >= quadrantSize + y)
+    if(p.x < x && p.y >= y)
         return &sw;
-    if (p.x < quadrantSize + x && p.y < quadrantSize + y)
+    if (p.x < x && p.y < y)
         return &nw;
     return nullptr;
 }
 
 void Quadtree::insert(Point point) {
     if (!root) {
-        root = new Node(point, {gridSize, 0, 0});
+        root = new Node(point, {gridSize, gridSize, 0, 0});
         return;
     }
     auto curr = root;
@@ -90,25 +92,19 @@ void Quadtree::insert(Point point) {
         currPoint = curr->point.value();
     else return;
     if (currPoint == point) return;
-    Node **quadrant1, **quadrant2;
-    do {
-        auto newWidth = curr->square.w/2;
-        auto x = curr->square.x;
-        auto y = curr->square.y;
-        if (newWidth < minGridSize) return;
-        curr->point = nullopt;
-        curr->ne = new Node({newWidth, x + newWidth, y});
-        curr->se = new Node({newWidth, x + newWidth, y + newWidth});
-        curr->sw = new Node({newWidth, x, y + newWidth});
-        curr->nw = new Node({newWidth, x, y});
-        curr->isDivided = true;
-        quadrant1 = curr->getQuadrant(currPoint);
-        quadrant2 = curr->getQuadrant(point);
-        curr = *quadrant1;
-    } while (*quadrant1 == *quadrant2);
-    // Mover el punto actual a un nuevo nodo e insertar el nuevo
-    (*quadrant1)->point = currPoint;
-    (*quadrant2)->point = point;
+
+    auto p = curr->point.value();
+    auto rect = curr->rectangle;
+    auto x = curr->rectangle.x;
+    auto y = curr->rectangle.y;
+//        if (newWidth < minGridSize) return;
+    curr->ne = new Node({x + rect.w - p.x, p.y - rect.y, p.x, y});
+    curr->se = new Node({x + rect.w - p.x, rect.y + rect.h - p.y, p.x, p.y});
+    curr->sw = new Node({p.x - rect.x, rect.y + rect.h - p.y, x, p.y});
+    curr->nw = new Node({p.x - rect.x, p.y - rect.y, x, y});
+    curr->isDivided = true;
+    auto quadrant = curr->getQuadrant(point);
+    (*quadrant)->point = point;
 }
 
 void Quadtree::insert(int x, int y) {
